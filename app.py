@@ -19,7 +19,11 @@ def index():
     """
     Example view demonstrating rendering a simple HTML page.
     """
-    return render_template('index.html', **make_context())
+    context = make_context()
+
+    context['INSTAGRAM_CLIENT_ID'] = app_config.get_secrets()['INSTAGRAM_CLIENT_ID']
+
+    return render_template('index.html', **context)
 
 @app.route('/widget.html')
 def widget():

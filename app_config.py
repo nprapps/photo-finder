@@ -31,7 +31,7 @@ PROJECT_FILENAME = 'photo_finder'
 """
 DEPLOYMENT
 """
-PRODUCTION_S3_BUCKETS = ['apps.npr.org', 'apps2.npr.org']
+PRODUCTION_S3_BUCKETS = ['tools.apps.npr.org']
 STAGING_S3_BUCKETS = ['stage-apps.npr.org']
 
 PRODUCTION_SERVERS = ['cron.nprapps.org']
@@ -116,7 +116,7 @@ def get_secrets():
     A method for accessing our secrets.
     """
     secrets = [
-        'EXAMPLE_SECRET'
+        'INSTAGRAM_CLIENT_ID'
     ]
 
     secrets_dict = {}
