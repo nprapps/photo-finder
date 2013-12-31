@@ -1,3 +1,5 @@
+var $geocoding_form;
+var $location;
 var $search_form;
 var $lat;
 var $lng;
@@ -5,7 +7,7 @@ var $distance;
 var $hours_back;
 var $photos;
 
-var DAYS_TO_GO_BACK = 5;
+var geocode_xhr = null;
 
 function updateInstagrams(lat, lng, distance, since) {
     var now = Math.round((new Date()).getTime() / 1000);
@@ -40,6 +42,79 @@ function renderInstagrams(instagrams) {
     $photos.html(html);
 }
 
+function on_geocoding_form_submit(e) {
+    var location = $location.val();
+
+    if (location == '') {
+        return false;
+    }
+
+    $lat.val('');
+    $lng.val('');
+
+    if (geocode_xhr) {
+        geocode_xhr.abort();
+    }
+
+    //$search_loading.show();
+
+    geocode_xhr = $.ajax({
+        'url': 'http://open.mapquestapi.com/nominatim/v1/search.php',
+        'data': {
+            'format': 'json',
+            'json_callback': 'theCallback',
+            'q': location,
+            //'viewbox': MISSOURI_EXTENTS.join(','),
+            'bounded': 1
+        },
+        'type': 'GET',
+        'dataType': 'jsonp',
+        'cache': true,
+        'jsonp': false,
+        'jsonpCallback': 'theCallback',
+        'contentType': 'application/json',
+        'complete': function() {
+            geocode_xhr = null;
+        },
+        'success': function(data) {
+            //$search_loading.hide();
+
+            if (data.length === 0) {
+                // No results
+                alert('No results found.');
+            } else if (data.length == 1) {
+                // One result
+                var locale = data[0];
+
+                var display_name = locale['display_name'].replace(', United States of America', '');
+                var lat = locale['lat'];
+                var lng = locale['lon'];
+
+                $location.val(display_name);
+                $lat.val(lat);
+                $lng.val(lng);
+            } else {
+                // Many results
+                /*$did_you_mean_list.empty();
+
+                _.each(data, function(locale) {
+                    locale['display_name'] = locale['display_name'].replace(', United States of America', '');
+                    var context = $.extend(APP_CONFIG, locale);
+                    var html = JST.did_you_mean(context);
+
+                    $did_you_mean_list.append(html);
+                });
+                    
+                $did_you_mean.show();*/
+
+               alert('Multiple results found. Be more specific.');
+            }
+        }
+    });
+
+    return false;
+}
+
 function on_search_form_submit(e) {
     var lat = parseFloat($lat.val());
     var lng = parseFloat($lng.val());
@@ -61,6 +136,8 @@ function on_search_form_submit(e) {
 }
 
 $(function() {
+    $geocoding_form = $('#geocoding');
+    $location = $('#location');
     $search_form = $('#search');
     $lat = $('#lat');
     $lng = $('#lng');
@@ -68,5 +145,6 @@ $(function() {
     $hours_back = $('#hours-back');
     $photos = $('#photos');
 
+    $geocoding_form.on('submit', on_geocoding_form_submit);  
     $search_form.on('submit', on_search_form_submit);  
 });
