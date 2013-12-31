@@ -22,8 +22,6 @@ function updateInstagrams(lat, lng, distance, since) {
         },
         dataType: 'jsonp',
         success: function(data) {
-            // TODO: process pagination?
-            console.log(data['meta']);
             renderInstagrams(data['data']);
         }
     });
@@ -34,8 +32,8 @@ function renderInstagrams(instagrams) {
 
     for (var i = 0; i < instagrams.length; i++) {
         var instagram = instagrams[i];
+        instagram['timestamp'] = moment.unix(instagram['created_time']).format('MMM Do h:mm a')
 
-        console.log(instagram);
         html += JST.instagram(instagram);
     }
         
