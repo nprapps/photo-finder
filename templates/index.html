@@ -15,7 +15,25 @@
 
 {% block wide_content %}
 <div class="row">
-    <div id="content" class="col-md-12">
+    <div class="col-md-12">
+        <form id="search">
+            <label for="lat">Lat:
+                <input id="lat" type="text" value="32.35" />
+            </label>
+            <label for="lng">Lng:
+                <input id="lng" type="text" value="-95.3" />
+            </label>
+            <label for="distance">Distance (km):
+                <input id="distance" type="text" value="50" />
+            </label>
+            <label for="hours-back">Within last (hours):
+                <input id="hours-back" type="text" value="48" />
+            </label>
+            <input type="submit" />
+        </form>
+
+        <div id="photos">
+        </div>
     </div>
 </div>
 {% endblock %}
