@@ -1,5 +1,8 @@
 var $geocoding_form;
 var $location;
+var $geocoding_loading;
+var $geocoding_did_you_mean;
+var $geocoding_not_found;
 var $search_form;
 var $lat;
 var $lng;
@@ -56,7 +59,9 @@ function on_geocoding_form_submit(e) {
         geocode_xhr.abort();
     }
 
-    //$search_loading.show();
+    $geocoding_not_found.hide();
+    $geocoding_did_you_mean.hide();
+    $geocoding_loading.show();
 
     geocode_xhr = $.ajax({
         'url': 'http://open.mapquestapi.com/nominatim/v1/search.php',
@@ -75,13 +80,12 @@ function on_geocoding_form_submit(e) {
         'contentType': 'application/json',
         'complete': function() {
             geocode_xhr = null;
+            $geocoding_loading.hide();
         },
         'success': function(data) {
-            //$search_loading.hide();
-
             if (data.length === 0) {
                 // No results
-                alert('No results found.');
+                $geocoding_not_found.show();
             } else if (data.length == 1) {
                 // One result
                 var locale = data[0];
@@ -90,24 +94,21 @@ function on_geocoding_form_submit(e) {
                 var lat = locale['lat'];
                 var lng = locale['lon'];
 
-                $location.val(display_name);
                 $lat.val(lat);
                 $lng.val(lng);
             } else {
                 // Many results
-                /*$did_you_mean_list.empty();
+                $geocoding_did_you_mean.empty();
 
                 _.each(data, function(locale) {
                     locale['display_name'] = locale['display_name'].replace(', United States of America', '');
                     var context = $.extend(APP_CONFIG, locale);
-                    var html = JST.did_you_mean(context);
+                    var html = JST.geocoding_did_you_mean(context);
 
-                    $did_you_mean_list.append(html);
+                    $geocoding_did_you_mean.append(html);
                 });
                     
-                $did_you_mean.show();*/
-
-               alert('Multiple results found. Be more specific.');
+                $geocoding_did_you_mean.show();
             }
         }
     });
@@ -115,6 +116,19 @@ function on_geocoding_form_submit(e) {
     return false;
 }
 
+function on_geocoding_did_you_mean_click() {
+    var $this = $(this);
+    var display_name = $this.data('display-name');
+    var latitude = $this.data('latitude');
+    var longitude = $this.data('longitude');
+
+    $geocoding_did_you_mean.hide();
+
+    $lat.val(latitude);
+    $lng.val(longitude);
+
+    return false;
+}
 function on_search_form_submit(e) {
     var lat = parseFloat($lat.val());
     var lng = parseFloat($lng.val());
@@ -137,6 +151,9 @@ function on_search_form_submit(e) {
 
 $(function() {
     $geocoding_form = $('#geocoding');
+    $geocoding_loading = $geocoding_form.find('.loading');
+    $geocoding_did_you_mean = $geocoding_form.find('.did-you-mean');
+    $geocoding_not_found = $geocoding_form.find('.not-found');
     $location = $('#location');
     $search_form = $('#search');
     $lat = $('#lat');
@@ -146,5 +163,6 @@ $(function() {
     $photos = $('#photos');
 
     $geocoding_form.on('submit', on_geocoding_form_submit);  
+    $geocoding_did_you_mean.on('click', 'li', on_geocoding_did_you_mean_click);
     $search_form.on('submit', on_search_form_submit);  
 });

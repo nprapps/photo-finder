@@ -18,17 +18,30 @@
     <div class="col-md-12">
         <form id="geocoding">
             <label for="location">Location: 
-                <input id="location" type="text" value="Tyler, TX" />
+                <input id="location" type="text" value="1600 Pennsylvania Ave NW, Washington" />
             </label>
             <input type="submit" />
+
+            <div class="loading" style="display: none;">
+                <p>Loading...</p>
+            </div>
+
+            <div class="did-you-mean" style="display: none;">
+                <p>Did you mean...?</p>
+                <ul></ul>
+            </div>
+
+            <div class="not-found" style="display: none;">
+                <p>Sorry, we couldn't find that address.</p>
+            </div>
         </form>
 
         <form id="search">
             <label for="lat">Lat:
-                <input id="lat" type="text" value="32.35" />
+                <input id="lat" type="text" value="38.89770045" />
             </label>
             <label for="lng">Lng:
-                <input id="lng" type="text" value="-95.3" />
+                <input id="lng" type="text" value="-77.0365643605898" />
             </label>
             <label for="distance">Distance (km):
                 <input id="distance" type="text" value="50" />
