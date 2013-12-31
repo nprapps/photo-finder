@@ -1,1 +1,11 @@
-<a href="<%= link %>"><img src="<%= images.low_resolution.url %>" /></a>
+<li>
+    <a href="<%= link %>"><img src="<%= images.low_resolution.url %>" /></a>
+    <div class="user">
+        <a href="http://instagram.com/<%= user.username %>"><img src="<%= user.profile_picture %>" /><%= user.username %></a>
+    </div>
+    <% if (caption) {  %>
+    <div class="caption">
+        <%= caption.text %>
+    </div>
+    <% } %>
+</li>

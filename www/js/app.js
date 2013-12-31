@@ -33,7 +33,10 @@ function renderInstagrams(instagrams) {
     var html = '';
 
     for (var i = 0; i < instagrams.length; i++) {
-        html += JST.instagram(instagrams[i]);
+        var instagram = instagrams[i];
+
+        console.log(instagram);
+        html += JST.instagram(instagram);
     }
         
     $photos.html(html);
