@@ -3,16 +3,31 @@ var $location;
 var $geocoding_loading;
 var $geocoding_did_you_mean;
 var $geocoding_not_found;
-var $search_form;
+var $geo_search_form;
 var $lat;
 var $lng;
 var $distance;
 var $hours_back;
+var $tag_search_form;
+var $tags;
 var $photos;
 
 var geocode_xhr = null;
 
-function updateInstagrams(lat, lng, distance, since) {
+function tag_search(tags) {
+    $.ajax({
+        url: 'https://api.instagram.com/v1/tags/' + tags + '/media/recent',
+        data: {
+            client_id: INSTAGRAM_CLIENT_ID
+        },
+        dataType: 'jsonp',
+        success: function(data) {
+            render(data['data']);
+        }
+    });
+}
+
+function geo_search(lat, lng, distance, since) {
     var now = Math.round((new Date()).getTime() / 1000);
 
     $.ajax({
@@ -27,19 +42,19 @@ function updateInstagrams(lat, lng, distance, since) {
         },
         dataType: 'jsonp',
         success: function(data) {
-            renderInstagrams(data['data']);
+            render(data['data']);
         }
     });
 }
 
-function renderInstagrams(instagrams) {
+function render(photos) {
     var html = '';
 
-    for (var i = 0; i < instagrams.length; i++) {
-        var instagram = instagrams[i];
-        instagram['timestamp'] = moment.unix(instagram['created_time']).format('MMM Do h:mm a')
+    for (var i = 0; i < photos.length; i++) {
+        var photo = photos[i];
+        photo['timestamp'] = moment.unix(photo['created_time']).format('MMM Do h:mm a')
 
-        html += JST.instagram(instagram);
+        html += JST.instagram(photo);
     }
         
     $photos.html(html);
@@ -129,7 +144,8 @@ function on_geocoding_did_you_mean_click() {
 
     return false;
 }
-function on_search_form_submit(e) {
+
+function on_geo_search_form_submit(e) {
     var lat = parseFloat($lat.val());
     var lng = parseFloat($lng.val());
     var distance = parseFloat($distance.val()) * 1000;
@@ -144,7 +160,16 @@ function on_search_form_submit(e) {
     var since = Math.round((new Date()).getTime() / 1000) - time_to_go_back;
 
     $photos.empty();
-    updateInstagrams(lat, lng, distance, since);
+    geo_search(lat, lng, distance, since);
+
+    return false;
+}
+
+function on_tag_search_form_submit(e) {
+    var tags = $tags.val();
+
+    $photos.empty();
+    tag_search(tags);
 
     return false;
 }
@@ -155,14 +180,17 @@ $(function() {
     $geocoding_did_you_mean = $geocoding_form.find('.did-you-mean');
     $geocoding_not_found = $geocoding_form.find('.not-found');
     $location = $('#location');
-    $search_form = $('#search');
+    $geo_search_form = $('#geo-search');
     $lat = $('#lat');
     $lng = $('#lng');
     $distance = $('#distance');
     $hours_back = $('#hours-back');
+    $tag_search_form = $('#tag-search');
+    $tags = $('#tags');
     $photos = $('#photos');
 
     $geocoding_form.on('submit', on_geocoding_form_submit);  
     $geocoding_did_you_mean.on('click', 'li', on_geocoding_did_you_mean_click);
-    $search_form.on('submit', on_search_form_submit);  
+    $geo_search_form.on('submit', on_geo_search_form_submit);  
+    $tag_search_form.on('submit', on_tag_search_form_submit);  
 });
