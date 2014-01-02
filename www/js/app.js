@@ -66,6 +66,8 @@ function on_more_tag_search_clicked() {
         url: more_tag_search_url,
         dataType: 'jsonp',
         success: function(data) {
+            more_tag_search_url = data['pagination']['next_url'];
+
             var $section = $photos.find('.section').last();
             
             render($section, data['data']);
