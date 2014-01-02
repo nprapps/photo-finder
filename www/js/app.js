@@ -175,11 +175,14 @@ function on_geocoding_form_submit(e) {
 function on_geocoding_did_you_mean_click() {
     var $this = $(this);
     var display_name = $this.data('display-name');
+    console.log(1);
 
     $geocoding_did_you_mean.hide();
     
     lat = $this.data('latitude');
     lng = $this.data('longitude');
+
+    on_geo_search_form_submit();
 
     return false;
 }
