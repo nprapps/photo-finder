@@ -97,7 +97,7 @@ function render($section, photos) {
         html += JST.instagram(photo);
     }
         
-    $section.find('ul').append(html);
+    $section.find('div.row').append(html);
 
     clipper.glue($('.clipper'));
 }
@@ -283,4 +283,6 @@ $(function() {
     
     $nav.find('li').on('click', on_nav_click);
     $nav.find('li.map').trigger('click');
+    
+//    $geocoding_form.trigger('submit');
 });

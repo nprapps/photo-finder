@@ -1,15 +1,17 @@
-<li>
+<div class="photo col-lg-3 col-md-4 col-sm-6">
     <a href="<%= link %>" target="_blank"><img src="<%= images.low_resolution.url %>" /></a>
-    <div class="user">
-        <a href="http://instagram.com/<%= user.username %>" target="_blank"><img src="<%= user.profile_picture %>" /><%= user.username %></a>
+    <div class="photo-info">
+        <div class="user">
+            <a href="http://instagram.com/<%= user.username %>" target="_blank"><img src="<%= user.profile_picture %>" /><%= user.username %></a>
+        </div>
+        <% if (caption) {  %>
+        <div class="caption">
+            <%= caption.text %>
+        </div>
+        <% } %>
+        <div class="timestamp" %>
+            <%= timestamp %>
+        </div>
     </div>
-    <% if (caption) {  %>
-    <div class="caption">
-        <%= caption.text %>
-    </div>
-    <div class="timestamp" %>
-        <%= timestamp %>
-    </div>
-    <% } %>
     <a href="#" class="clipper btn btn-blue" data-clipboard-text='<iframe src="<%= link %>embed/" width="612" height="710" frameborder="0" scrolling="no" allowtransparency="true"></iframe>'>Copy embed code</a>
-</li>
+</div>

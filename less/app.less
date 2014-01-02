@@ -163,31 +163,59 @@ header {
 
 #search-results {
     margin-top: 22px;
+    margin-bottom: 22px;
 }
 
 #photos {
     .section {
         clear: both;
+        .clearfix();
     }
-
-    ul {
-        padding-left: 0px;
-
-        li {
-            list-style: none;
+    
+    .photo {
+        margin-bottom: 20px;
+        font-size: 14px;
+        line-height: 1.4;
+        color: #444;
+        
+        img {
+            width: 100%;
+            height: auto;
             display: block;
-            float: left;
-            width: 306px;
-            margin-right: 20px;
-            margin-bottom: 20px;
+        }
+        
+        .caption {
+            margin-bottom: 11px;
+            height: 75px;
+            overflow-y: auto;
+            
+            &:hover {
+                overflow-y: visible;
+            }
+        }
+        
+        .photo-info {
+            height: 150px;
+        }
+        
+        .timestamp {
+            color: #999;
+            margin-bottom: 11px;
+            font-size: 12px;
+        }
 
-            .user {
-                margin-top: 5px; 
-                img {
-                    width: 32px;
-                    height: 32px;
-                    margin-right: 10px;
-                }
+        .user {
+            margin: 11px 0;
+            font-weight: bold;
+            font-size: 12px;
+            line-height: 22px;
+            .clearfix();
+            
+            img {
+                float: left;
+                width: 22px;
+                height: 22px;
+                margin: 0 10px 0 0;
             }
         }
     }
