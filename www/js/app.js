@@ -24,7 +24,7 @@ var lat = null;
 var lng = null;
 var search_xhr = null;
 var tag_search_queue = null;
-
+var geo_search_queue = null;
 
 function trim(s) {
     return s.replace(/^\s+|\s+$/g, '');
