@@ -189,6 +189,7 @@ function on_geo_search_form_submit(e) {
     var since = Math.round((new Date()).getTime() / 1000) - time_to_go_back;
 
     hasher.setHash('geo-search/' + [lat, lng, distance, since].join(','));
+    console.log(lat, lng, distance, since);
 
     return false;
 }
