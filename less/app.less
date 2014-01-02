@@ -118,6 +118,10 @@ header {
 
 
 // Content
+#content {
+    margin-bottom: 44px;
+}
+
 #search-nav {
     margin: 11px 0 11px 0;
     padding: 0;
@@ -150,8 +154,6 @@ header {
 }
 
 #geo-search {
-    float: right;
-
     h3 { 
         margin: 0 22px 0 0;
         display: inline-block;
@@ -170,11 +172,12 @@ header {
         text-align: center;
         width: 50px;
     }
+    input[type='submit'] {
+        display: none; 
+    }
 }
 
 #search {
-    margin-bottom: 44px;
-    
     label { margin-right: 5px; }
     .btn { margin-left: 11px; }
     .help-block { font-size: 12px; }
@@ -182,7 +185,6 @@ header {
 
 #search-address,
 #search-hashtag {
-    display: none;
     padding-top: 11px;
 
     input[type='text'] {
@@ -192,20 +194,12 @@ header {
 }
 
 #search-results {
-    display: none;
     margin-bottom: 22px;
 
     .search-header {
         padding-bottom: 11px;
         border-bottom: 2px solid #eee;
         margin-bottom: 22px;
-        .clearfix();
-    
-        h2 {
-            margin: 0;
-            float: left;
-            line-height: 44px;
-        }
     }
 }
 
