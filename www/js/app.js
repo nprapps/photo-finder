@@ -23,7 +23,9 @@ function tag_search(tags) {
         },
         dataType: 'jsonp',
         success: function(data) {
-            render(data['data']);
+            var $section = $(JST.instagram_section({ title: 'Photos tagged "' + tags + '"' }));
+            $photos.append($section);
+            render($section, data['data']);
         }
     });
 }
@@ -43,12 +45,14 @@ function geo_search(lat, lng, distance, since) {
         },
         dataType: 'jsonp',
         success: function(data) {
-            render(data['data']);
+            var $section = $(JST.instagram_section({ title: 'Photos near ' + lat + ', ' + lng }));
+            $photos.append($section);
+            render($section, data['data']);
         }
     });
 }
 
-function render(photos) {
+function render($section, photos) {
     var html = '';
 
     for (var i = 0; i < photos.length; i++) {
@@ -58,7 +62,7 @@ function render(photos) {
         html += JST.instagram(photo);
     }
         
-    $photos.html(html);
+    $section.find('ul').append(html);
 
     clipper.glue($('.clipper'));
 }
