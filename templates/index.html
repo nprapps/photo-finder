@@ -30,10 +30,11 @@
         
             <div id="search-address">
                 <form id="geocoding">
-                    <label for="location">Location: 
+                    <label for="location">Street Address:</label>
+                    <nobr>
                         <input id="location" type="text" value="1600 Pennsylvania Ave NW, Washington" />
-                    </label>
-                    <input type="submit" value="Search" class="btn btn-blue" />
+                        <input type="submit" value="Search" class="btn btn-blue" />
+                    </nobr>
 
                     <div class="loading" style="display: none;">
                         <p>Loading...</p>
@@ -52,10 +53,12 @@
 
             <div id="search-hashtag">
                 <form id="tag-search">
-                    <label for="tags">Tag: 
-                        <input id="tags" type="text" value="nofilter" />
-                    </label>
-                    <input type="submit" value="Search" class="btn btn-blue" />
+                    <label for="tags">Hashtag(s):</label>
+                    <nobr>
+                        <input id="tags" type="text" value="nprlife, npr" />
+                        <input type="submit" value="Search" class="btn btn-blue" />
+                    </nobr>
+                    <p class="help-block">Note: This searches hashtags only. It does not search caption text.</p>
                 </form>
             </div>
 
