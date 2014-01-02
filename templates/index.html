@@ -15,35 +15,53 @@
 
 {% block wide_content %}
 <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-12" id="search">
         
         <ul class="nav">
-            <li class="map active">Map</li>
+            <li class="map">Map</li>
             <li class="address">Address</li>
             <li class="hashtag">Hashtag</li>
         </ul>
         
+        <div id="search-map" class="search">
+            <p>[Map Here!]</p>
+        </div>
+        
+        <div id="search-address" class="search">
+
+            <form id="geocoding">
+                <label for="location">Location: 
+                    <input id="location" type="text" value="1600 Pennsylvania Ave NW, Washington" />
+                </label>
+                <input type="submit" />
+
+                <div class="loading" style="display: none;">
+                    <p>Loading...</p>
+                </div>
+
+                <div class="did-you-mean" style="display: none;">
+                    <p>Did you mean...?</p>
+                    <ul></ul>
+                </div>
+
+                <div class="not-found" style="display: none;">
+                    <p>Sorry, we couldn't find that address.</p>
+                </div>
+            </form>
+
+        </div>
+
+        <div id="search-hashtag" class="search">
+            <form id="tag-search">
+                <label for="tags">Tag: 
+                    <input id="tags" type="text" value="nofilter" />
+                </label>
+                <input type="submit" />
+            </form>
+        </div>
+
     </div>    
-    <div class="col-md-12">
-        <form id="geocoding">
-            <label for="location">Location: 
-                <input id="location" type="text" value="1600 Pennsylvania Ave NW, Washington" />
-            </label>
-            <input type="submit" />
-
-            <div class="loading" style="display: none;">
-                <p>Loading...</p>
-            </div>
-
-            <div class="did-you-mean" style="display: none;">
-                <p>Did you mean...?</p>
-                <ul></ul>
-            </div>
-
-            <div class="not-found" style="display: none;">
-                <p>Sorry, we couldn't find that address.</p>
-            </div>
-        </form>
+    <div class="col-md-12" id="search-results">
 
         <form id="geo-search">
             <label for="lat">Lat:
@@ -61,15 +79,9 @@
             <input type="submit" />
         </form>
 
-        <form id="tag-search">
-            <label for="tags">Tag: 
-                <input id="tags" type="text" value="nofilter" />
-            </label>
-            <input type="submit" />
-        </form>
-
         <div id="photos">
         </div>
+
     </div>
 </div>
 {% endblock %}

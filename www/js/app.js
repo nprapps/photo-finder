@@ -12,6 +12,13 @@ var $tag_search_form;
 var $tags;
 var $photos;
 
+var $nav;
+var $search;
+var $search_map;
+var $search_address;
+var $search_hashtag;
+var $search_results;
+
 var clipper = null;
 var geocode_xhr = null;
 
@@ -118,6 +125,9 @@ function on_geocoding_form_submit(e) {
 
                 $lat.val(lat);
                 $lng.val(lng);
+                
+                // auto-submit the lat/lon
+                on_geo_search_form_submit();
             } else {
                 // Many results
                 $geocoding_did_you_mean.empty();
@@ -166,6 +176,8 @@ function on_geo_search_form_submit(e) {
     var time_to_go_back = 60 * 60 * hours_back;
     var since = Math.round((new Date()).getTime() / 1000) - time_to_go_back;
 
+    $search.hide();
+    $search_results.show();
     $photos.empty();
     geo_search(lat, lng, distance, since);
 
@@ -179,6 +191,31 @@ function on_tag_search_form_submit(e) {
     tag_search(tags);
 
     return false;
+}
+
+function on_nav_click(e) {
+    var tab = e.target.className;
+    
+    switch(tab) {
+        case 'address':
+            $search_address.show();
+            $search_hashtag.hide();
+            $search_map.hide();
+            break;
+        case 'hashtag':
+            $search_address.hide();
+            $search_hashtag.show();
+            $search_map.hide();
+            break;
+        case 'map':
+            $search_address.hide();
+            $search_hashtag.hide();
+            $search_map.show();
+            break;
+    }
+
+    $nav.find('li.' + tab).addClass('active').siblings('li').removeClass('active');
+    $search_results.hide();
 }
 
 $(function() {
@@ -195,6 +232,13 @@ $(function() {
     $tag_search_form = $('#tag-search');
     $tags = $('#tags');
     $photos = $('#photos');
+    
+    $nav = $('ul.nav');
+    $search = $('#search');
+    $search_map = $('#search-map');
+    $search_address = $('#search-address');
+    $search_hashtag = $('#search-hashtag');
+    $search_results = $('#search-results');
 
     ZeroClipboard.setDefaults({
         moviePath: "js/lib/ZeroClipboard.swf"
@@ -209,5 +253,8 @@ $(function() {
     $geocoding_form.on('submit', on_geocoding_form_submit);  
     $geocoding_did_you_mean.on('click', 'li', on_geocoding_did_you_mean_click);
     $geo_search_form.on('submit', on_geo_search_form_submit);  
-    $tag_search_form.on('submit', on_tag_search_form_submit);  
+    $tag_search_form.on('submit', on_tag_search_form_submit);
+    
+    $nav.find('li').on('click', on_nav_click);
+    $nav.find('li.map').trigger('click');
 });
