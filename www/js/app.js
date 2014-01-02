@@ -13,19 +13,39 @@ var $tags;
 var $photos;
 
 var clipper = null;
-var geocode_xhr = null;
+var tag_search_queue = null;
+var search_xhr = null;
 
-function tag_search(tags) {
-    $.ajax({
-        url: 'https://api.instagram.com/v1/tags/' + tags + '/media/recent',
+function trim(s) {
+    return s.replace(/^\s+|\s+$/g, '');
+}
+
+function tag_search() {
+    var tag = tag_search_queue.shift();
+
+    if (!tag) {
+        return;
+    }
+
+    if (search_xhr) {
+        search_xhr.abort();
+    }
+
+    search_xhr = $.ajax({
+        url: 'https://api.instagram.com/v1/tags/' + tag + '/media/recent',
         data: {
             client_id: INSTAGRAM_CLIENT_ID
         },
         dataType: 'jsonp',
+        successData: {
+            tag: tag
+        },
         success: function(data) {
-            var $section = $(JST.instagram_section({ title: 'Photos tagged "' + tags + '"' }));
+            var $section = $(JST.instagram_section({ title: 'Photos tagged "' + this.successData.tag + '"' }));
             $photos.append($section);
             render($section, data['data']);
+
+            tag_search();
         }
     });
 }
@@ -33,7 +53,11 @@ function tag_search(tags) {
 function geo_search(lat, lng, distance, since) {
     var now = Math.round((new Date()).getTime() / 1000);
 
-    $.ajax({
+    if (search_xhr) {
+        search_xhr.abort();
+    }
+
+    search_xhr = $.ajax({
         url: 'https://api.instagram.com/v1/media/search',
         data: {
             lat: lat,
@@ -44,6 +68,9 @@ function geo_search(lat, lng, distance, since) {
             max_timestamp: now 
         },
         dataType: 'jsonp',
+        complete: function() {
+            search_xhr = null;
+        },
         success: function(data) {
             var $section = $(JST.instagram_section({ title: 'Photos near ' + lat + ', ' + lng }));
             $photos.append($section);
@@ -74,18 +101,18 @@ function on_geocoding_form_submit(e) {
         return false;
     }
 
+    if (search_xhr) {
+        search_xhr.abort();
+    }
+
     $lat.val('');
     $lng.val('');
-
-    if (geocode_xhr) {
-        geocode_xhr.abort();
-    }
 
     $geocoding_not_found.hide();
     $geocoding_did_you_mean.hide();
     $geocoding_loading.show();
 
-    geocode_xhr = $.ajax({
+    search_xhr = $.ajax({
         'url': 'http://open.mapquestapi.com/nominatim/v1/search.php',
         'data': {
             'format': 'json',
@@ -101,7 +128,7 @@ function on_geocoding_form_submit(e) {
         'jsonpCallback': 'theCallback',
         'contentType': 'application/json',
         'complete': function() {
-            geocode_xhr = null;
+            search_xhr = null;
             $geocoding_loading.hide();
         },
         'success': function(data) {
@@ -175,8 +202,14 @@ function on_geo_search_form_submit(e) {
 function on_tag_search_form_submit(e) {
     var tags = $tags.val();
 
+    if (tags == '') {
+        return false;
+    }
+
+    tag_search_queue = _.map(tags.split(','), trim);
+
     $photos.empty();
-    tag_search(tags);
+    tag_search();
 
     return false;
 }
