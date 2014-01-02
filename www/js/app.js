@@ -248,12 +248,16 @@ function on_hash_changed(new_hash, old_hash) {
     var args = bits[1].split(',');
 
     if (hash_type == 'geo-search') {
+        $nav.find('li.address').click();
+
         $search_results.show();
         $geo_search_form.show();
         $photos.empty();
 
         geo_search.apply(this, args);
     } else if (hash_type == 'tag-search') {
+        $nav.find('li.hashtag').click();
+
         $tags.val(args);
 
         tag_search_queue = _.map(args, trim);
@@ -295,9 +299,6 @@ $(function() {
         alert('Copied to clipboard!');
     });
 
-    hasher.changed.add(on_hash_changed);
-    hasher.initialized.add(on_hash_changed);
-
     $geocoding_form.on('submit', on_geocoding_form_submit);  
     $geocoding_did_you_mean.on('click', 'li', on_geocoding_did_you_mean_click);
     $geo_search_form.on('submit', on_geo_search_form_submit);  
@@ -306,6 +307,8 @@ $(function() {
     $nav.find('li').on('click', on_nav_click);
     $nav.find('li.map').trigger('click');
 
+    hasher.changed.add(on_hash_changed);
+    hasher.initialized.add(on_hash_changed);
     hasher.init();
     
 //    $geocoding_form.trigger('submit');
