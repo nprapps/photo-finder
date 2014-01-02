@@ -7,8 +7,9 @@ var $geo_search_form;
 var $distance;
 var $hours_back;
 var $tag_search_form;
-var $tags;
+var $tag;
 var $photos;
+var $load_more;
 
 var $nav;
 var $search;
@@ -23,20 +24,13 @@ var hours_back = 48;
 var lat = null;
 var lng = null;
 var search_xhr = null;
-var tag_search_queue = null;
-var geo_search_queue = null;
+var more_tag_search_url = null;
 
 function trim(s) {
     return s.replace(/^\s+|\s+$/g, '');
 }
 
-function tag_search() {
-    var tag = tag_search_queue.shift();
-
-    if (!tag) {
-        return;
-    }
-
+function tag_search(tag) {
     if (search_xhr) {
         search_xhr.abort();
     }
@@ -51,13 +45,34 @@ function tag_search() {
             tag: tag
         },
         success: function(data) {
-            var $section = $(JST.instagram_section({ title: 'Photos tagged "' + this.successData.tag + '"' }));
+            more_tag_search_url = data['pagination']['next_url'];
+
+            var $section = $(JST.instagram_section({
+                title: 'Photos tagged "' + this.successData.tag + '"'
+            }));
+            
             $photos.append($section);
             render($section, data['data']);
-
-            tag_search();
         }
     });
+}
+
+function on_more_tag_search_clicked() {
+    if (search_xhr) {
+        search_xhr.abort();
+    }
+
+    search_xhr = $.ajax({
+        url: more_tag_search_url,
+        dataType: 'jsonp',
+        success: function(data) {
+            var $section = $photos.find('.section').last();
+            
+            render($section, data['data']);
+        }
+    });
+
+    return false;
 }
 
 function geo_search(lat, lng, distance, since) {
@@ -175,7 +190,6 @@ function on_geocoding_form_submit(e) {
 function on_geocoding_did_you_mean_click() {
     var $this = $(this);
     var display_name = $this.data('display-name');
-    console.log(1);
 
     $geocoding_did_you_mean.hide();
     
@@ -200,19 +214,18 @@ function on_geo_search_form_submit(e) {
     var since = Math.round((new Date()).getTime() / 1000) - time_to_go_back;
 
     hasher.setHash('geo-search/' + [lat, lng, distance, since].join(','));
-    console.log(lat, lng, distance, since);
 
     return false;
 }
 
 function on_tag_search_form_submit(e) {
-    var tags = $tags.val();
+    var tag = $tag.val();
 
-    if (tags == '') {
+    if (tag == '') {
         return false;
     }
 
-    hasher.setHash('tag-search/' + tags);
+    hasher.setHash('tag-search/' + tag);
 
     return false;
 }
@@ -255,6 +268,7 @@ function on_hash_changed(new_hash, old_hash) {
         $nav.find('li.address').click();
 
         $search_results.show();
+        $load_more.hide();
         $geo_search_form.show();
         $photos.empty();
 
@@ -262,14 +276,13 @@ function on_hash_changed(new_hash, old_hash) {
     } else if (hash_type == 'tag-search') {
         $nav.find('li.hashtag').click();
 
-        $tags.val(args);
-
-        tag_search_queue = _.map(args, trim);
+        $tag.val(args[0]);
 
         $search_results.show();
+        $load_more.show();
         $geo_search_form.hide();
         $photos.empty();
-        tag_search();
+        tag_search.apply(this, args);
     }
 }
 
@@ -283,8 +296,9 @@ $(function() {
     $distance = $('#distance');
     $hours_back = $('#hours-back');
     $tag_search_form = $('#tag-search');
-    $tags = $('#tags');
+    $tag = $('#tag');
     $photos = $('#photos');
+    $load_more = $('#load-more');
     
     $nav = $('#search-nav');
     $search = $('#search');
@@ -307,6 +321,7 @@ $(function() {
     $geocoding_did_you_mean.on('click', 'li', on_geocoding_did_you_mean_click);
     $geo_search_form.on('submit', on_geo_search_form_submit);  
     $tag_search_form.on('submit', on_tag_search_form_submit);
+    $load_more.on('click', on_more_tag_search_clicked);
     
     $nav.find('li').on('click', on_nav_click);
     $nav.find('li.map').trigger('click');
