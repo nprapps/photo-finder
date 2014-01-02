@@ -12,6 +12,7 @@ var $tag_search_form;
 var $tags;
 var $photos;
 
+var clipper = null;
 var geocode_xhr = null;
 
 function tag_search(tags) {
@@ -58,6 +59,8 @@ function render(photos) {
     }
         
     $photos.html(html);
+
+    clipper.glue($('.clipper'));
 }
 
 function on_geocoding_form_submit(e) {
@@ -188,6 +191,16 @@ $(function() {
     $tag_search_form = $('#tag-search');
     $tags = $('#tags');
     $photos = $('#photos');
+
+    ZeroClipboard.setDefaults({
+        moviePath: "js/lib/ZeroClipboard.swf"
+    });
+    
+    clipper = new ZeroClipboard();
+
+    clipper.on('complete', function() {
+        alert('Copied to clipboard!');
+    });
 
     $geocoding_form.on('submit', on_geocoding_form_submit);  
     $geocoding_did_you_mean.on('click', 'li', on_geocoding_did_you_mean_click);
