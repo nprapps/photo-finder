@@ -266,7 +266,7 @@ $(function() {
     $tags = $('#tags');
     $photos = $('#photos');
     
-    $nav = $('ul.nav');
+    $nav = $('#search-nav');
     $search = $('#search');
     $search_map = $('#search-map');
     $search_address = $('#search-address');
