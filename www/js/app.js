@@ -7,7 +7,7 @@ var $geo_search_form;
 var $distance;
 var $hours_back;
 var $tag_search_form;
-var $tags;
+var $tag;
 var $photos;
 
 var $nav;
@@ -23,20 +23,12 @@ var hours_back = 48;
 var lat = null;
 var lng = null;
 var search_xhr = null;
-var tag_search_queue = null;
-var geo_search_queue = null;
 
 function trim(s) {
     return s.replace(/^\s+|\s+$/g, '');
 }
 
-function tag_search() {
-    var tag = tag_search_queue.shift();
-
-    if (!tag) {
-        return;
-    }
-
+function tag_search(tag) {
     if (search_xhr) {
         search_xhr.abort();
     }
@@ -54,8 +46,6 @@ function tag_search() {
             var $section = $(JST.instagram_section({ title: 'Photos tagged "' + this.successData.tag + '"' }));
             $photos.append($section);
             render($section, data['data']);
-
-            tag_search();
         }
     });
 }
@@ -175,7 +165,6 @@ function on_geocoding_form_submit(e) {
 function on_geocoding_did_you_mean_click() {
     var $this = $(this);
     var display_name = $this.data('display-name');
-    console.log(1);
 
     $geocoding_did_you_mean.hide();
     
@@ -205,13 +194,13 @@ function on_geo_search_form_submit(e) {
 }
 
 function on_tag_search_form_submit(e) {
-    var tags = $tags.val();
+    var tag = $tag.val();
 
-    if (tags == '') {
+    if (tag == '') {
         return false;
     }
 
-    hasher.setHash('tag-search/' + tags);
+    hasher.setHash('tag-search/' + tag);
 
     return false;
 }
@@ -261,14 +250,12 @@ function on_hash_changed(new_hash, old_hash) {
     } else if (hash_type == 'tag-search') {
         $nav.find('li.hashtag').click();
 
-        $tags.val(args);
-
-        tag_search_queue = _.map(args, trim);
+        $tag.val(args[0]);
 
         $search_results.show();
         $geo_search_form.hide();
         $photos.empty();
-        tag_search();
+        tag_search(args[0]);
     }
 }
 
@@ -282,7 +269,7 @@ $(function() {
     $distance = $('#distance');
     $hours_back = $('#hours-back');
     $tag_search_form = $('#tag-search');
-    $tags = $('#tags');
+    $tag = $('#tag');
     $photos = $('#photos');
     
     $nav = $('#search-nav');
