@@ -4,8 +4,6 @@ var $geocoding_loading;
 var $geocoding_did_you_mean;
 var $geocoding_not_found;
 var $geo_search_form;
-var $lat;
-var $lng;
 var $distance;
 var $hours_back;
 var $tag_search_form;
@@ -20,8 +18,11 @@ var $search_hashtag;
 var $search_results;
 
 var clipper = null;
-var tag_search_queue = null;
+var lat = null;
+var lng = null;
 var search_xhr = null;
+var tag_search_queue = null;
+
 
 function trim(s) {
     return s.replace(/^\s+|\s+$/g, '');
@@ -112,9 +113,6 @@ function on_geocoding_form_submit(e) {
         search_xhr.abort();
     }
 
-    $lat.val('');
-    $lng.val('');
-
     $geocoding_not_found.hide();
     $geocoding_did_you_mean.hide();
     $geocoding_loading.show();
@@ -147,11 +145,8 @@ function on_geocoding_form_submit(e) {
                 var locale = data[0];
 
                 var display_name = locale['display_name'].replace(', United States of America', '');
-                var lat = locale['lat'];
-                var lng = locale['lon'];
-
-                $lat.val(lat);
-                $lng.val(lng);
+                lat = locale['lat'];
+                lng = locale['lon'];
                 
                 // auto-submit the lat/lon
                 on_geo_search_form_submit();
@@ -178,20 +173,16 @@ function on_geocoding_form_submit(e) {
 function on_geocoding_did_you_mean_click() {
     var $this = $(this);
     var display_name = $this.data('display-name');
-    var latitude = $this.data('latitude');
-    var longitude = $this.data('longitude');
 
     $geocoding_did_you_mean.hide();
-
-    $lat.val(latitude);
-    $lng.val(longitude);
+    
+    lat = $this.data('latitude');
+    lng = $this.data('longitude');
 
     return false;
 }
 
 function on_geo_search_form_submit(e) {
-    var lat = parseFloat($lat.val());
-    var lng = parseFloat($lng.val());
     var distance = parseFloat($distance.val()) * 1000;
     var hours_back = parseFloat($hours_back.val());
 
@@ -258,8 +249,6 @@ $(function() {
     $geocoding_not_found = $geocoding_form.find('.not-found');
     $location = $('#location');
     $geo_search_form = $('#geo-search');
-    $lat = $('#lat');
-    $lng = $('#lng');
     $distance = $('#distance');
     $hours_back = $('#hours-back');
     $tag_search_form = $('#tag-search');
