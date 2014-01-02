@@ -257,6 +257,8 @@ function on_nav_click(e) {
 
 function on_hash_changed(new_hash, old_hash) {
     if (new_hash == '') {
+        hasher.setHash('tag-search/nprlife');
+
         return;
     }
 
@@ -329,6 +331,4 @@ $(function() {
     hasher.changed.add(on_hash_changed);
     hasher.initialized.add(on_hash_changed);
     hasher.init();
-    
-//    $geocoding_form.trigger('submit');
 });
