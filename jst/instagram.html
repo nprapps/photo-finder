@@ -4,14 +4,17 @@
         <div class="user">
             <a href="http://instagram.com/<%= user.username %>" target="_blank"><img src="<%= user.profile_picture %>" /><%= user.username %></a>
         </div>
-        <% if (caption) {  %>
         <div class="caption">
+            <% if (caption) {  %>
             <%= caption.text %>
+            <% } else { %>
+            <em>No caption available.</em>
+            <% }%>
         </div>
-        <% } %>
         <div class="timestamp" %>
             <%= timestamp %>
         </div>
+
+        <a href="#" class="clipper btn btn-blue" data-clipboard-text='<iframe src="<%= link %>embed/" width="612" height="710" frameborder="0" scrolling="no" allowtransparency="true"></iframe>'><i class="fa fa-share"></i>Copy Embed Code</a>
     </div>
-    <a href="#" class="clipper btn btn-blue" data-clipboard-text='<iframe src="<%= link %>embed/" width="612" height="710" frameborder="0" scrolling="no" allowtransparency="true"></iframe>'>Copy embed code</a>
 </div>
