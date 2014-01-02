@@ -196,7 +196,7 @@ function on_geo_search_form_submit(e) {
     var time_to_go_back = 60 * 60 * hours_back;
     var since = Math.round((new Date()).getTime() / 1000) - time_to_go_back;
 
-    $search.hide();
+//    $search.hide();
     $search_results.show();
     $geo_search_form.show();
     $photos.empty();
@@ -214,7 +214,7 @@ function on_tag_search_form_submit(e) {
 
     tag_search_queue = _.map(tags.split(','), trim);
 
-    $search.hide();
+//    $search.hide();
     $search_results.show();
     $geo_search_form.hide();
     $photos.empty();
