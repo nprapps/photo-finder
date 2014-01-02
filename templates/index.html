@@ -5,8 +5,8 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <h1>Photo finder</h1>
-                <h2>Instagram edition</h2>
+                <h1>Photo Finder</h1>
+                <h2>Search for recent Instagram photos near a location or using a particular hashtag</h2>
             </div>
         </div>
     </div>
@@ -28,12 +28,11 @@
         </div>
         
         <div id="search-address">
-
             <form id="geocoding">
                 <label for="location">Location: 
                     <input id="location" type="text" value="1600 Pennsylvania Ave NW, Washington" />
                 </label>
-                <input type="submit" />
+                <input type="submit" value="Search" class="btn btn-blue" />
 
                 <div class="loading" style="display: none;">
                     <p>Loading...</p>
@@ -56,21 +55,22 @@
                 <label for="tags">Tag: 
                     <input id="tags" type="text" value="nofilter" />
                 </label>
-                <input type="submit" />
+                <input type="submit" value="Search" class="btn btn-blue" />
             </form>
         </div>
 
     </div>    
     <div class="col-md-12" id="search-results">
-
         <form id="geo-search">
+            <h2>Filter Results By:</h2>
+        
             <label for="distance">Distance (km):
                 <input id="distance" type="text" value="50" />
             </label>
             <label for="hours-back">Within last (hours):
                 <input id="hours-back" type="text" value="48" />
             </label>
-            <input type="submit" />
+            <input type="submit" value="Search" class="btn btn-blue" />
         </form>
 
         <div id="photos">

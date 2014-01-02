@@ -14,7 +14,7 @@ import os
 NAMES
 """
 # Project name used for display
-PROJECT_NAME = 'photo-finder'
+PROJECT_NAME = 'Photo Finder'
 
 # Project name in urls
 # Use dashes, not underscores!

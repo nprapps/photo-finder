@@ -196,6 +196,7 @@ function on_geo_search_form_submit(e) {
 
     $search.hide();
     $search_results.show();
+    $geo_search_form.show();
     $photos.empty();
     geo_search(lat, lng, distance, since);
 
@@ -211,6 +212,9 @@ function on_tag_search_form_submit(e) {
 
     tag_search_queue = _.map(tags.split(','), trim);
 
+    $search.hide();
+    $search_results.show();
+    $geo_search_form.hide();
     $photos.empty();
     tag_search();
 
