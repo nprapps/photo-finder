@@ -118,6 +118,37 @@ header {
 
 
 // Content
+ul.nav {
+    margin: 0 0 11px 0;
+    padding: 0;
+    list-style-type: none;
+    display: table;
+    width: 100%;
+    
+    li {
+        display: table-cell;
+        margin: 0;
+        width: 33%;
+        background-color: #ebebeb;
+        line-height: 66px;
+        text-align: center;
+        font-size: 16px;
+        font-weight: bold;
+        text-transform: lowercase;
+        color: #6D8AC4;
+        
+        &:hover {
+            opacity: .7;
+            cursor: pointer;
+        }
+        &.active {
+            background-color: #fff;
+            border: 2px solid #ebebeb;
+            border-bottom: 0;
+        }
+    }
+}
+
 #photos {
     padding-left: 0px;
 
