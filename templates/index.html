@@ -14,68 +14,85 @@
 {% endblock %}
 
 {% block wide_content %}
-<div class="row">
-    <div class="col-md-12" id="search">
+<div id="search" class="container">
+    <div class="row">
+        <div class="col-sm-12">
         
-        <ul id="search-nav">
-            <li class="map">Map</li>
-            <li class="address">Address</li>
-            <li class="hashtag">Hashtag</li>
-        </ul>
+            <ul id="search-nav">
+                <li class="map">Map</li>
+                <li class="address">Address</li>
+                <li class="hashtag">Hashtag</li>
+            </ul>
         
-        <div id="search-map">
-            <p>[Map Here!]</p>
-        </div>
+            <div id="search-map">
+                <p>[Map Here!]</p>
+            </div>
         
-        <div id="search-address">
-            <form id="geocoding">
-                <label for="location">Location: 
-                    <input id="location" type="text" value="1600 Pennsylvania Ave NW, Washington" />
-                </label>
-                <input type="submit" value="Search" class="btn btn-blue" />
+            <div id="search-address">
+                <form id="geocoding">
+                    <label for="location">Location: 
+                        <input id="location" type="text" value="1600 Pennsylvania Ave NW, Washington" />
+                    </label>
+                    <input type="submit" value="Search" class="btn btn-blue" />
 
-                <div class="loading" style="display: none;">
-                    <p>Loading...</p>
+                    <div class="loading" style="display: none;">
+                        <p>Loading...</p>
+                    </div>
+
+                    <div class="did-you-mean" style="display: none;">
+                        <p>Did you mean...?</p>
+                        <ul></ul>
+                    </div>
+
+                    <div class="not-found" style="display: none;">
+                        <p>Sorry, we couldn't find that address.</p>
+                    </div>
+                </form>
+            </div>
+
+            <div id="search-hashtag">
+                <form id="tag-search">
+                    <label for="tags">Tag: 
+                        <input id="tags" type="text" value="nofilter" />
+                    </label>
+                    <input type="submit" value="Search" class="btn btn-blue" />
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div id="search-results">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+            
+                <div class="search-header">
+                    <h2>Search Results</h2>
+                    <form id="geo-search">
+                         <h3>Filter:</h3>
+
+                         <label for="distance">
+                             Within
+                             <input id="distance" type="text" value="50" />
+                             km of this location
+                         </label>
+
+                         <label for="hours-back">
+                             Within the last
+                             <input id="hours-back" type="text" value="48" />
+                             hours
+                         </label>
+
+                         <input type="submit" value="Search" class="btn btn-blue" />
+                    </form>
                 </div>
 
-                <div class="did-you-mean" style="display: none;">
-                    <p>Did you mean...?</p>
-                    <ul></ul>
+                <div id="photos">
                 </div>
-
-                <div class="not-found" style="display: none;">
-                    <p>Sorry, we couldn't find that address.</p>
-                </div>
-            </form>
-
+            </div>
         </div>
-
-        <div id="search-hashtag">
-            <form id="tag-search">
-                <label for="tags">Tag: 
-                    <input id="tags" type="text" value="nofilter" />
-                </label>
-                <input type="submit" value="Search" class="btn btn-blue" />
-            </form>
-        </div>
-
-    </div>    
-    <div class="col-md-12" id="search-results">
-        <form id="geo-search">
-            <h2>Filter Results By:</h2>
-        
-            <label for="distance">Distance (km):
-                <input id="distance" type="text" value="50" />
-            </label>
-            <label for="hours-back">Within last (hours):
-                <input id="hours-back" type="text" value="48" />
-            </label>
-            <input type="submit" value="Search" class="btn btn-blue" />
-        </form>
-
-        <div id="photos">
-        </div>
-
     </div>
 </div>
 {% endblock %}

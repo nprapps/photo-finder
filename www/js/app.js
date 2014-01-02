@@ -18,6 +18,8 @@ var $search_hashtag;
 var $search_results;
 
 var clipper = null;
+var distance = 50;
+var hours_back = 48;
 var lat = null;
 var lng = null;
 var search_xhr = null;
@@ -97,7 +99,7 @@ function render($section, photos) {
         html += JST.instagram(photo);
     }
         
-    $section.find('div.row').append(html);
+    $section.find('.photo-list').append(html);
 
     clipper.glue($('.clipper'));
 }
@@ -183,8 +185,8 @@ function on_geocoding_did_you_mean_click() {
 }
 
 function on_geo_search_form_submit(e) {
-    var distance = parseFloat($distance.val()) * 1000;
-    var hours_back = parseFloat($hours_back.val());
+    distance = parseFloat($distance.val()) * 1000;
+    hours_back = parseFloat($hours_back.val());
 
     if (hours_back > 168) {
         alert('Can\'t search photos from more than 7 days (168 hours) back.');

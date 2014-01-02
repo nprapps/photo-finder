@@ -150,11 +150,26 @@ header {
 }
 
 #geo-search {
-    border-bottom: 2px solid #eee;
-    padding-bottom: 33px;
-    margin-bottom: 22px;
+    float: right;
 
-    h2 { margin-top: 0; }
+    h3 { 
+        margin: 0 22px 0 0;
+        display: inline-block;
+        font-size: 14px;
+        line-height: 44px;
+        font-weight: bold;
+        color: #121212;
+    }
+    label {
+        font-size: 14px;
+        font-weight: normal;
+        margin-right: 22px;
+        color: #444;
+    }
+    input[type='text'] {
+        text-align: center;
+        width: 50px;
+    }
 }
 
 #search {
@@ -162,8 +177,20 @@ header {
 }
 
 #search-results {
-    margin-top: 22px;
     margin-bottom: 22px;
+
+    .search-header {
+        padding: 11px 0 11px 0;
+        border-bottom: 2px solid #eee;
+        margin-bottom: 22px;
+        .clearfix();
+    
+        h2 {
+            margin: 0;
+            float: left;
+            line-height: 44px;
+        }
+    }
 }
 
 #photos {

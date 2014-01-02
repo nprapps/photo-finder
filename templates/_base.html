@@ -62,12 +62,8 @@
     {% endblock header_content %}
 
     <section id="content">
-        <div class="container">
-            <div class="row">
-            {% block wide_content %}
-            {% endblock wide_content %}
-            </div>
-        </div>
+        {% block wide_content %}
+        {% endblock wide_content %}
     </section>
 
     <footer>
