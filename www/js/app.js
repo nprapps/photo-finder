@@ -9,6 +9,7 @@ var $hours_back;
 var $tag_search_form;
 var $tag;
 var $photos;
+var $load_more;
 
 var $nav;
 var $search;
@@ -23,6 +24,7 @@ var hours_back = 48;
 var lat = null;
 var lng = null;
 var search_xhr = null;
+var more_tag_search_url = null;
 
 function trim(s) {
     return s.replace(/^\s+|\s+$/g, '');
@@ -43,11 +45,34 @@ function tag_search(tag) {
             tag: tag
         },
         success: function(data) {
-            var $section = $(JST.instagram_section({ title: 'Photos tagged "' + this.successData.tag + '"' }));
+            more_tag_search_url = data['pagination']['next_url'];
+
+            var $section = $(JST.instagram_section({
+                title: 'Photos tagged "' + this.successData.tag + '"'
+            }));
+            
             $photos.append($section);
             render($section, data['data']);
         }
     });
+}
+
+function on_more_tag_search_clicked() {
+    if (search_xhr) {
+        search_xhr.abort();
+    }
+
+    search_xhr = $.ajax({
+        url: more_tag_search_url,
+        dataType: 'jsonp',
+        success: function(data) {
+            var $section = $photos.find('.section').last();
+            
+            render($section, data['data']);
+        }
+    });
+
+    return false;
 }
 
 function geo_search(lat, lng, distance, since) {
@@ -189,7 +214,6 @@ function on_geo_search_form_submit(e) {
     var since = Math.round((new Date()).getTime() / 1000) - time_to_go_back;
 
     hasher.setHash('geo-search/' + [lat, lng, distance, since].join(','));
-    console.log(lat, lng, distance, since);
 
     return false;
 }
@@ -244,6 +268,7 @@ function on_hash_changed(new_hash, old_hash) {
         $nav.find('li.address').click();
 
         $search_results.show();
+        $load_more.hide();
         $geo_search_form.show();
         $photos.empty();
 
@@ -254,9 +279,10 @@ function on_hash_changed(new_hash, old_hash) {
         $tag.val(args[0]);
 
         $search_results.show();
+        $load_more.show();
         $geo_search_form.hide();
         $photos.empty();
-        tag_search(args[0]);
+        tag_search.apply(this, args);
     }
 }
 
@@ -272,6 +298,7 @@ $(function() {
     $tag_search_form = $('#tag-search');
     $tag = $('#tag');
     $photos = $('#photos');
+    $load_more = $('#load-more');
     
     $nav = $('#search-nav');
     $search = $('#search');
@@ -294,6 +321,7 @@ $(function() {
     $geocoding_did_you_mean.on('click', 'li', on_geocoding_did_you_mean_click);
     $geo_search_form.on('submit', on_geo_search_form_submit);  
     $tag_search_form.on('submit', on_tag_search_form_submit);
+    $load_more.on('click', on_more_tag_search_clicked);
     
     $nav.find('li').on('click', on_nav_click);
     $nav.find('li.map').trigger('click');
