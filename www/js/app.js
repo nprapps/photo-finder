@@ -311,7 +311,7 @@ function on_hash_changed(new_hash, old_hash) {
     }
 }
 
-var process_map_location = function() {
+var process_map_location = _.debounce(function() {
     /*
     * Runs when the map location is upddated.
     * Sets the hash with the current latlng;
@@ -324,12 +324,15 @@ var process_map_location = function() {
 
     zoom_level = map.getZoom();
 
-    var now = moment();
+    var now = moment().valueOf();
+    console.log(now);
+    var then = moment().subtract('days', 1).valueOf();
+    console.log(then);
 
     // Set the hash, which is what triggers some redrawing.
-    hasher.setHash('map-search/' + [lat, lng, now.subtract('days', 1).valueOf(), now.valueOf()].join(','));
+    hasher.setHash('map-search/' + [lat, lng, then, now].join(','));
 
-};
+}, 250);
 
 var reset_map = function() {
     /*
