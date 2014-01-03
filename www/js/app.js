@@ -4,7 +4,6 @@ var $geocoding_loading;
 var $geocoding_did_you_mean;
 var $geocoding_not_found;
 var $geo_search_form;
-var $distance;
 var $hours_back;
 var $tag_search_form;
 var $tag;
@@ -20,7 +19,6 @@ var $search_hashtag;
 var $search_results;
 
 var clipper = null;
-var distance = 50;
 var hours_back = 48;
 var lat = null;
 var lng = null;
@@ -81,9 +79,7 @@ function on_more_tag_search_clicked() {
     return false;
 }
 
-function geo_search(lat, lng, distance, since) {
-    console.log(lat, lng, distance);
-
+function geo_search(lat, lng, since) {
     var now = Math.round((new Date()).getTime() / 1000);
 
     if (search_xhr) {
@@ -95,7 +91,7 @@ function geo_search(lat, lng, distance, since) {
         data: {
             lat: lat,
             lng: lng,
-            distance: distance,
+            distance: 5000, // 5km (API max)
             client_id: INSTAGRAM_CLIENT_ID,
             min_timestamp: since,
             max_timestamp: now
@@ -210,7 +206,6 @@ function on_geocoding_did_you_mean_click() {
 }
 
 function on_geo_search_form_submit(e) {
-    distance = parseFloat($distance.val()) * 1000;
     hours_back = parseFloat($hours_back.val());
 
     if (hours_back > 168) {
@@ -221,7 +216,7 @@ function on_geo_search_form_submit(e) {
     var time_to_go_back = 60 * 60 * hours_back;
     var since = Math.round((new Date()).getTime() / 1000) - time_to_go_back;
 
-    hasher.setHash('geo-search/' + [lat, lng, distance, since].join(','));
+    hasher.setHash('geo-search/' + [lat, lng, since].join(','));
 
     return false;
 }
@@ -323,8 +318,7 @@ var process_map_location = function() {
 
     zoom_level = map.getZoom();
 
-    // Use the global distance and hours back.
-    distance = parseFloat($distance.val()) * 1000;
+    // Use the global hours back.
     hours_back = parseFloat($hours_back.val());
 
     if (hours_back > 168) {
@@ -336,7 +330,7 @@ var process_map_location = function() {
     var since = Math.round((new Date()).getTime() / 1000) - time_to_go_back;
 
     // Set the hash, which is what triggers some redrawing.
-    hasher.setHash('map-search/' + [lat, lng, distance, since].join(','));
+    hasher.setHash('map-search/' + [lat, lng, since].join(','));
 
 };
 
@@ -375,7 +369,6 @@ $(function() {
     $geocoding_not_found = $geocoding_form.find('.not-found');
     $location = $('#location');
     $geo_search_form = $('#geo-search');
-    $distance = $('#distance');
     $hours_back = $('#hours-back');
     $tag_search_form = $('#tag-search');
     $tag = $('#tag');
