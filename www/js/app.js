@@ -363,7 +363,9 @@ var init_map = function() {
     * Initializes map. Centers on Chicago, IL.
     */
     map = L.map('map').setView([39.8282, -98.5795], zoom_level);
-    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
+//    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
+//    L.tileLayer('http://api.tiles.mapbox.com/v3/npr.map-s5q5dags/{z}/{x}/{y}.png').addTo(map);
+    L.tileLayer('http://api.tiles.mapbox.com/v3/npr.gnc95p35/{z}/{x}/{y}.png').addTo(map);
 };
 
 $(function() {
