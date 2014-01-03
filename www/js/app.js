@@ -100,6 +100,7 @@ function geo_search(lat, lng, start_datetime, end_datetime) {
                 min_timestamp: start_datetime / 1000,
                 max_timestamp: end_datetime / 1000
             },
+            async: false,
             dataType: 'jsonp',
             complete: function() {
                 search_xhr = null;
