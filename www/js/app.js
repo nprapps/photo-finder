@@ -10,6 +10,7 @@ var $tag_search_form;
 var $tag;
 var $photos;
 var $load_more;
+var $center_target;
 
 var $nav;
 var $search;
@@ -25,6 +26,8 @@ var lat = null;
 var lng = null;
 var search_xhr = null;
 var more_tag_search_url = null;
+
+var map;
 
 function trim(s) {
     return s.replace(/^\s+|\s+$/g, '');
@@ -50,7 +53,7 @@ function tag_search(tag) {
             var $section = $(JST.instagram_section({
                 title: 'Photos tagged "' + this.successData.tag + '"'
             }));
-            
+
             $photos.append($section);
             render($section, data['data']);
         }
@@ -69,7 +72,7 @@ function on_more_tag_search_clicked() {
             more_tag_search_url = data['pagination']['next_url'];
 
             var $section = $photos.find('.section').last();
-            
+
             render($section, data['data']);
         }
     });
@@ -78,6 +81,8 @@ function on_more_tag_search_clicked() {
 }
 
 function geo_search(lat, lng, distance, since) {
+    console.log(lat, lng, distance);
+
     var now = Math.round((new Date()).getTime() / 1000);
 
     if (search_xhr) {
@@ -92,7 +97,7 @@ function geo_search(lat, lng, distance, since) {
             distance: distance,
             client_id: INSTAGRAM_CLIENT_ID,
             min_timestamp: since,
-            max_timestamp: now 
+            max_timestamp: now
         },
         dataType: 'jsonp',
         complete: function() {
@@ -111,11 +116,11 @@ function render($section, photos) {
 
     for (var i = 0; i < photos.length; i++) {
         var photo = photos[i];
-        photo['timestamp'] = moment.unix(photo['created_time']).format('MMM Do h:mm a')
+        photo['timestamp'] = moment.unix(photo['created_time']).format('MMM Do h:mm a');
 
         html += JST.instagram(photo);
     }
-        
+
     $section.find('.photo-list').append(html);
 
     clipper.glue($('.clipper'));
@@ -124,7 +129,7 @@ function render($section, photos) {
 function on_geocoding_form_submit(e) {
     var location = $location.val();
 
-    if (location == '') {
+    if (location === '') {
         return false;
     }
 
@@ -166,7 +171,7 @@ function on_geocoding_form_submit(e) {
                 var display_name = locale['display_name'].replace(', United States of America', '');
                 lat = locale['lat'];
                 lng = locale['lon'];
-                
+
                 // auto-submit the lat/lon
                 on_geo_search_form_submit();
             } else {
@@ -180,7 +185,7 @@ function on_geocoding_form_submit(e) {
 
                     $geocoding_did_you_mean.append(html);
                 });
-                    
+
                 $geocoding_did_you_mean.show();
             }
         }
@@ -194,7 +199,7 @@ function on_geocoding_did_you_mean_click() {
     var display_name = $this.data('display-name');
 
     $geocoding_did_you_mean.hide();
-    
+
     lat = $this.data('latitude');
     lng = $this.data('longitude');
 
@@ -223,7 +228,7 @@ function on_geo_search_form_submit(e) {
 function on_tag_search_form_submit(e) {
     var tag = $tag.val();
 
-    if (tag == '') {
+    if (tag === '') {
         return false;
     }
 
@@ -234,7 +239,7 @@ function on_tag_search_form_submit(e) {
 
 function on_nav_click(e) {
     var tab = e.target.className;
-    
+
     switch(tab) {
         case 'address':
             $search_address.show();
@@ -250,15 +255,17 @@ function on_nav_click(e) {
             $search_address.hide();
             $search_hashtag.hide();
             $search_map.show();
+            reset_map();
             break;
     }
 
     $nav.find('li.' + tab).addClass('active').siblings('li').removeClass('active');
     $search_results.hide();
+
 }
 
 function on_hash_changed(new_hash, old_hash) {
-    if (new_hash == '') {
+    if (new_hash === '') {
         hasher.setHash('tag-search/nprlife');
 
         return;
@@ -286,9 +293,76 @@ function on_hash_changed(new_hash, old_hash) {
         $load_more.show();
         $geo_search_form.hide();
         $photos.empty();
+
         tag_search.apply(this, args);
+    } else if (hash_type == 'map-search') {
+        $nav.find('li.map').click();
+
+        map.setView([args[0], args[1]], 7);
+
+        $search_results.show();
+        $load_more.hide();
+        $geo_search_form.hide();
+        $photos.empty();
+
+        geo_search.apply(this, args);
     }
 }
+
+var process_map_location = function() {
+    /*
+    * Runs when the map location is upddated.
+    * Sets the hash with the current latlng;
+    */
+
+    // Handle the map's current location.
+    var latlng = map.getCenter();
+    var lat = latlng.lat;
+    var lng = latlng.lng;
+
+
+    // Use the global distance and hours back.
+    distance = parseFloat($distance.val()) * 1000;
+    hours_back = parseFloat($hours_back.val());
+
+    if (hours_back > 168) {
+        alert('Can\'t search photos from more than 7 days (168 hours) back.');
+        return false;
+    }
+
+    var time_to_go_back = 60 * 60 * hours_back;
+    var since = Math.round((new Date()).getTime() / 1000) - time_to_go_back;
+
+    // Set the hash, which is what triggers some redrawing.
+    hasher.setHash('map-search/' + [lat, lng, distance, since].join(','));
+
+};
+
+var reset_map = function() {
+    /*
+    * Resets/redraws the map after movement and such.
+    */
+
+    // Set the transparent marker in the center of the map.
+    var target_top = $('#map').height() / 2;
+    var target_left = $('#map').width() / 2;
+    $center_target.css('top', target_top - 15 + 'px');
+    $center_target.css('left', target_left - 15 + 'px');
+
+    // Repaint.
+    map.invalidateSize(false);
+
+    // Handle the map's location.
+    process_map_location();
+};
+
+var init_map = function() {
+    /*
+    * Initializes map. Centers on Chicago, IL.
+    */
+    map = L.map('map').setView([39.8282, -98.5795], 7);
+    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
+};
 
 $(function() {
     $geocoding_form = $('#geocoding');
@@ -303,7 +377,7 @@ $(function() {
     $tag = $('#tag');
     $photos = $('#photos');
     $load_more = $('#load-more');
-    
+
     $nav = $('#search-nav');
     $search = $('#search');
     $search_map = $('#search-map');
@@ -311,24 +385,28 @@ $(function() {
     $search_hashtag = $('#search-hashtag');
     $search_results = $('#search-results');
 
+    $center_target = $('#map-marker');
+
     ZeroClipboard.setDefaults({
         moviePath: "js/lib/ZeroClipboard.swf"
     });
-    
+
     clipper = new ZeroClipboard();
 
     clipper.on('complete', function() {
         alert('Copied to clipboard!');
     });
 
-    $geocoding_form.on('submit', on_geocoding_form_submit);  
+    $geocoding_form.on('submit', on_geocoding_form_submit);
     $geocoding_did_you_mean.on('click', 'li', on_geocoding_did_you_mean_click);
-    $geo_search_form.on('submit', on_geo_search_form_submit);  
+    $geo_search_form.on('submit', on_geo_search_form_submit);
     $tag_search_form.on('submit', on_tag_search_form_submit);
     $load_more.on('click', on_more_tag_search_clicked);
-    
+
     $nav.find('li').on('click', on_nav_click);
-    $nav.find('li.map').trigger('click');
+
+    init_map();
+    map.on('moveend', process_map_location);
 
     hasher.changed.add(on_hash_changed);
     hasher.initialized.add(on_hash_changed);
