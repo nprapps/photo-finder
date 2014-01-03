@@ -27,7 +27,14 @@ photo-finder
 What is this?
 -------------
 
-**Describe photo-finder here.**
+Photo Finder is a JavaScript-based search tool for the [Instagram API](http://instagram.com/developer/). You can find geotagged Instagram photos by:
+
+* Hashtag (note: this searches ONLY hashtags, not caption text)
+* Street address (uses the MapQuest API to pull lat/lon)
+* Map - search around a general geographic area (uses Leaflet and Mapbox-hosted tiles)
+
+Note: You will need your own [Instagram developer API key](http://instagram.com/developer/). The app is looking for a key stored in the user ``~/.bash_profile``: ``export photo_finder_INSTAGRAM_CLIENT_ID='<API_KEY_HERE>'``
+
 
 Assumptions
 -----------
@@ -88,6 +95,8 @@ Hide project secrets
 --------------------
 
 Project secrets should **never** be stored in ``app_config.py`` or anywhere else in the repository. They will be leaked to the client if you do. Instead, always store passwords, keys, etc. in environment variables and document that they are needed here in the README.
+
+
 
 Save media assets
 -----------------
