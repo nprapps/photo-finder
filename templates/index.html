@@ -2,19 +2,17 @@
 
 {% block header_content %}
 <header>
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <h1>Photo Finder</h1>
-                <h2>Search for recent Instagram photos near a location or using a particular hashtag</h2>
-            </div>
-        </div>
+    <div class="row">
+       <div class="col-md-12">
+           <h1>Photo Finder</h1>
+           <h2>Search for recent Instagram photos near a location or using a particular hashtag</h2>
+       </div>
     </div>
 </header>
 {% endblock %}
 
 {% block wide_content %}
-<div id="search" class="container">
+<div id="search">
     <div class="row">
         <div class="col-sm-12">
         
@@ -67,35 +65,33 @@
 </div>
 
 <div id="search-results">
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-12">
-            
-                <div class="search-header">
-                    <form id="geo-search">
-                         <h3>Filter:</h3>
+    <div class="row">
+        <div class="col-sm-12">
+    
+            <div class="search-header">
+                <form id="geo-search">
+                     <h3>Filter:</h3>
 
-                         <label for="distance">
-                             Within
-                             <input id="distance" type="text" value="50" />
-                             km of this location
-                         </label>
+                     <label for="distance">
+                         Within
+                         <input id="distance" type="text" value="50" />
+                         km of this location
+                     </label>
 
-                         <label for="hours-back">
-                             Within the last
-                             <input id="hours-back" type="text" value="48" />
-                             hours
-                         </label>
+                     <label for="hours-back">
+                         Within the last
+                         <input id="hours-back" type="text" value="48" />
+                         hours
+                     </label>
 
-                         <input type="submit" value="Search" class="btn btn-blue" />
-                    </form>
-                </div>
-
-                <div id="photos">
-                </div>
-
-                <a id="load-more" href="#" class="btn btn-blue">Load more</a>
+                     <input type="submit" value="Search" class="btn btn-blue" />
+                </form>
             </div>
+
+            <div id="photos">
+            </div>
+
+            <a id="load-more" href="#" class="btn btn-blue">Load more</a>
         </div>
     </div>
 </div>
