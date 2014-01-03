@@ -413,6 +413,7 @@ $(function() {
 
     init_map();
     map.on('moveend', process_map_location);
+    map.on('resize', reset_map);
 
     hasher.changed.add(on_hash_changed);
     hasher.initialized.add(on_hash_changed);
