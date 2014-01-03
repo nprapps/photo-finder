@@ -28,6 +28,7 @@ var search_xhr = null;
 var more_tag_search_url = null;
 
 var map;
+var zoom_level;
 
 function trim(s) {
     return s.replace(/^\s+|\s+$/g, '');
@@ -298,7 +299,7 @@ function on_hash_changed(new_hash, old_hash) {
     } else if (hash_type == 'map-search') {
         $nav.find('li.map').click();
 
-        map.setView([args[0], args[1]], 7);
+        map.setView([args[0], args[1]], zoom_level);
 
         $search_results.show();
         $load_more.hide();
@@ -320,6 +321,7 @@ var process_map_location = function() {
     var lat = latlng.lat;
     var lng = latlng.lng;
 
+    zoom_level = map.getZoom();
 
     // Use the global distance and hours back.
     distance = parseFloat($distance.val()) * 1000;
@@ -360,7 +362,7 @@ var init_map = function() {
     /*
     * Initializes map. Centers on Chicago, IL.
     */
-    map = L.map('map').setView([39.8282, -98.5795], 7);
+    map = L.map('map').setView([39.8282, -98.5795], zoom_level);
     L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
 };
 
@@ -386,6 +388,8 @@ $(function() {
     $search_results = $('#search-results');
 
     $center_target = $('#map-marker');
+
+    zoom_level = 7;
 
     ZeroClipboard.setDefaults({
         moviePath: "js/lib/ZeroClipboard.swf"
