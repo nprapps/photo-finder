@@ -88,6 +88,7 @@ Then bootstrap the project:
 ```
 cd photo-finder
 mkvirtualenv --no-site-packages photo-finder
+pip install -r requirements.txt
 fab bootstrap
 ```
 
