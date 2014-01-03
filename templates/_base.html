@@ -33,8 +33,10 @@
 
     <!-- CSS -->
     {{ CSS.push('less/app.less') }}
+    {{ CSS.push('css/jquery.simple-dtpicker.css') }}
     {% block extra_css %}{% endblock extra_css %}
     {{ CSS.render('css/app.min.css') }}
+
     {% block extra_head %}
     {% endblock extra_head %}
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.css" />
@@ -86,6 +88,7 @@
     {{ JS.push('js/lib/signals.js') }}
     {{ JS.push('js/lib/hasher.js') }}
     {{ JS.push('js/lib/ZeroClipboard.js') }}
+    {{ JS.push('js/lib/jquery.simple-dtpicker.js') }}
     {{ JS.push('js/app_config.js') }}
     {{ JS.push('js/copy.js') }}
     {{ JS.push('js/console.js') }}

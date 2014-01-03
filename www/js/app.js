@@ -4,7 +4,7 @@ var $geocoding_loading;
 var $geocoding_did_you_mean;
 var $geocoding_not_found;
 var $geo_search_form;
-var $hours_back;
+var $start_datetime;
 var $tag_search_form;
 var $tag;
 var $photos;
@@ -19,7 +19,6 @@ var $search_hashtag;
 var $search_results;
 
 var clipper = null;
-var hours_back = 48;
 var lat = null;
 var lng = null;
 var search_xhr = null;
@@ -27,6 +26,9 @@ var more_tag_search_url = null;
 
 var map;
 var zoom_level;
+
+var SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
+var DATETIME_FORMAT = 'YYYY-MM-DD hh:mm';
 
 function trim(s) {
     return s.replace(/^\s+|\s+$/g, '');
@@ -79,33 +81,38 @@ function on_more_tag_search_clicked() {
     return false;
 }
 
-function geo_search(lat, lng, since) {
-    var now = Math.round((new Date()).getTime() / 1000);
-
+function geo_search(lat, lng, start_datetime, end_datetime) {
     if (search_xhr) {
         search_xhr.abort();
     }
 
-    search_xhr = $.ajax({
-        url: 'https://api.instagram.com/v1/media/search',
-        data: {
-            lat: lat,
-            lng: lng,
-            distance: 5000, // 5km (API max)
-            client_id: INSTAGRAM_CLIENT_ID,
-            min_timestamp: since,
-            max_timestamp: now
-        },
-        dataType: 'jsonp',
-        complete: function() {
-            search_xhr = null;
-        },
-        success: function(data) {
-            var $section = $(JST.instagram_section({ title: 'Photos near ' + lat + ', ' + lng }));
-            $photos.append($section);
-            render($section, data['data']);
-        }
-    });
+    start_datetime = parseInt(start_datetime);
+    end_datetime = parseInt(end_datetime);
+
+    while (start_datetime < end_datetime) {
+        search_xhr = $.ajax({
+            url: 'https://api.instagram.com/v1/media/search',
+            data: {
+                lat: lat,
+                lng: lng,
+                distance: 5000, // 5km (API max)
+                client_id: INSTAGRAM_CLIENT_ID,
+                min_timestamp: start_datetime / 1000,
+                max_timestamp: end_datetime / 1000
+            },
+            dataType: 'jsonp',
+            complete: function() {
+                search_xhr = null;
+            },
+            success: function(data) {
+                var $section = $(JST.instagram_section({ title: 'Photos near ' + lat + ', ' + lng }));
+                $photos.append($section);
+                render($section, data['data']);
+            }
+        });
+    
+        start_datetime += SEVEN_DAYS;
+    }
 }
 
 function render($section, photos) {
@@ -206,17 +213,13 @@ function on_geocoding_did_you_mean_click() {
 }
 
 function on_geo_search_form_submit(e) {
-    hours_back = parseFloat($hours_back.val());
+    var start_datetime = moment($start_datetime.val(), 'YYYY-MM-DD hh:mm').valueOf();
+    var end_datetime = moment($end_datetime.val(), 'YYYY-MM-DD hh:mm').valueOf();
 
-    if (hours_back > 168) {
-        alert('Can\'t search photos from more than 7 days (168 hours) back.');
-        return false;
-    }
+    console.log(start_datetime);
+    console.log(end_datetime);
 
-    var time_to_go_back = 60 * 60 * hours_back;
-    var since = Math.round((new Date()).getTime() / 1000) - time_to_go_back;
-
-    hasher.setHash('geo-search/' + [lat, lng, since].join(','));
+    hasher.setHash('geo-search/' + [lat, lng, start_datetime, end_datetime].join(','));
 
     return false;
 }
@@ -274,6 +277,9 @@ function on_hash_changed(new_hash, old_hash) {
     if (hash_type == 'geo-search') {
         $nav.find('li.address').click();
 
+        $start_datetime.val(moment(parseInt(args[2])).format(DATETIME_FORMAT));
+        $end_datetime.val(moment(parseInt(args[3])).format(DATETIME_FORMAT));
+
         $search_results.show();
         $load_more.hide();
         $geo_search_form.show();
@@ -318,19 +324,10 @@ var process_map_location = function() {
 
     zoom_level = map.getZoom();
 
-    // Use the global hours back.
-    hours_back = parseFloat($hours_back.val());
-
-    if (hours_back > 168) {
-        alert('Can\'t search photos from more than 7 days (168 hours) back.');
-        return false;
-    }
-
-    var time_to_go_back = 60 * 60 * hours_back;
-    var since = Math.round((new Date()).getTime() / 1000) - time_to_go_back;
+    var now = moment();
 
     // Set the hash, which is what triggers some redrawing.
-    hasher.setHash('map-search/' + [lat, lng, since].join(','));
+    hasher.setHash('map-search/' + [lat, lng, now.subtract('days', 1).valueOf(), now.valueOf()].join(','));
 
 };
 
@@ -369,7 +366,8 @@ $(function() {
     $geocoding_not_found = $geocoding_form.find('.not-found');
     $location = $('#location');
     $geo_search_form = $('#geo-search');
-    $hours_back = $('#hours-back');
+    $start_datetime = $('#start-datetime');
+    $end_datetime = $('#end-datetime');
     $tag_search_form = $('#tag-search');
     $tag = $('#tag');
     $photos = $('#photos');
@@ -394,6 +392,18 @@ $(function() {
 
     clipper.on('complete', function() {
         alert('Copied to clipboard!');
+    });
+
+    var now = moment();
+
+    $end_datetime.appendDtpicker({
+        current: now.format(DATETIME_FORMAT)
+    });
+
+    now.subtract('days', 1);
+
+    $start_datetime.appendDtpicker({
+        current: now.format(DATETIME_FORMAT)
     });
 
     $geocoding_form.on('submit', on_geocoding_form_submit);
