@@ -66,38 +66,54 @@ a.btn.btn-blue {
 
 
 // Navbar
-nav {
-    background-color: #000;
-    height: 46px;
-    overflow: hidden;
-    border-bottom: 2px solid #fff;
+nav.tools {
+    background: #222;
+    margin: 0;
+    padding: 25px 30px;
+    color: #eee;
+    height: auto;
+    font-family: "Gotham SSm", Arial, Helvetica, sans-serif;
+    .clearfix();
 
-    ul {
-        list-style: none;
-        margin: 0 30px;
-        padding: 0;
-
-        li {
-            float: left;
-            height: 44px;
-            line-height: 44px;
-            margin-left: 22px;
-            font-size: 20px;
-            font-family: 'Gotham SSm', Arial, Helvetica, sans-serif;
-
-            &:first-child { margin-left: 0; }
-            &:hover { opacity: 0.7; }
-            a, a:link, a:visited, a:hover, a:active { color: #fff; }
+    h1 {
+        display: inline-block;
+        text-transform: uppercase;
+        font-weight: normal;
+        -webkit-font-smoothing: antialiased;
+        line-height: 32px;
+        margin: 0;
+        float: left;
+        
+        span.help {
+            font-size: 14px;
+            margin-left: 11px;
+            opacity: 0.7;
+            text-transform: none;
+            
+            i { margin-right: 5px; }
         }
     }
-    .npr {
-        img {
-            margin: -2px 0 0 0;
-            width: 61px;
-            height: auto;
-            border: 1px solid #fff;
-            margin-right: 6px;
-        }
+    
+    a {
+        font-weight: normal;
+        color: #eee;
+        
+        &:hover { opacity: 0.7; }
+    }
+
+    img {
+        height: 20px;
+        width: auto;
+        border: 1px solid #eee;
+        margin-right: 5px;
+    }
+    
+    a.toolkit-link { 
+        float: right;
+        line-height: 32px;
+        text-transform: lowercase;
+        display: inline-block;
+        clear: none;
     }
 }
 
@@ -105,8 +121,8 @@ nav {
 // Header
 header {
     background-color: #ebebeb;
-    padding: 50px 30px 30px 30px;
-    margin: 0;
+    padding: 15px 30px;
+    margin: 0 0 11px 0;
     border-bottom: 2px solid #fff;
 
     h1 {
